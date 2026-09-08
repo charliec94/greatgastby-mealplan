@@ -1,0 +1,1 @@
+{"name":"savorly-meal-planner","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"node server.js","start":"node server.js","test":"node --test","build":"node --check server.js && node --check public/app.js"},"engines":{"node":">=20"}}

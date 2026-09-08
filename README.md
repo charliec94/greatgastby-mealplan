@@ -1,0 +1,60 @@
+# Savorly
+
+A small, polished meal-planning app built for a home server. Plan all seven days, track calories and protein, adjust servings, and get one consolidated shopping list grouped by aisle.
+
+## Features
+
+- Daily calorie and protein goals
+- Weekly planner including Saturday and Sunday
+- Six photographed sample recipes
+- Serving-aware nutrition and ingredient scaling
+- Automatically consolidated, aisle-grouped shopping list
+- Persistent shopping checks and plan data in `data/state.json`
+- Responsive desktop and mobile layout
+- No third-party runtime dependencies
+
+## Run with Docker Compose
+
+```bash
+docker compose up -d --build
+```
+
+Open `http://YOUR-SERVER-IP:3000`. Planner data is stored in the local `./data` folder and survives container upgrades.
+
+## Unraid setup
+
+### Docker Compose Manager
+
+1. Copy this project to `/mnt/user/appdata/savorly/app`.
+2. In the Compose Manager plugin, add a stack using `docker-compose.yml`.
+3. Start the stack and open `http://YOUR-UNRAID-IP:3000`.
+
+### Manual container
+
+Build the image from this folder, then create a container with:
+
+- Container port: `3000`
+- Host port: `3000` (or any free port)
+- Persistent path: `/mnt/user/appdata/savorly/data` → `/app/data`
+- Restart policy: `unless-stopped`
+
+The app has no login and is intended for a trusted home network. Put it behind your existing authenticated reverse proxy before exposing it to the internet.
+
+## Run locally without Docker
+
+Node.js 20 or newer is the only requirement.
+
+```bash
+npm start
+```
+
+Then open `http://localhost:3000`.
+
+## Test
+
+```bash
+npm test
+npm run build
+```
+
+Recipe photos load from Unsplash, so an internet connection is required for images. The planner itself continues to work if images are unavailable.
