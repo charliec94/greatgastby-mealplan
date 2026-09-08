@@ -11,6 +11,8 @@ A small, polished meal-planning app built for a home server. Plan all seven days
 - Personal recipe creation with ingredients, instructions, storage notes, and photos
 - Draft, Tried, and Verified recipe workflow with 1–5 star ratings and cooking notes
 - Editing and deletion for personal recipes
+- Complete cooking methods and storage guidance for all starter recipes
+- Automatic per-serving calorie and protein calculation from personal-recipe ingredient totals
 - Serving-aware nutrition and ingredient scaling
 - Automatically consolidated, aisle-grouped shopping list
 - Persistent shopping checks and plan data in `data/state.json`
@@ -70,3 +72,5 @@ The included recipes are starter concepts for testing the planner, not independe
 A production recipe should record its original source, cooking instructions, date tested, personal rating, storage guidance, and verified per-serving nutrition. USDA FoodData Central is a strong source for ingredient-level nutrition. A recipe provider such as Edamam can provide ongoing discovery, but its attribution and caching rules must be followed and API credentials should be stored only on the server.
 
 Personal recipes, ratings, verification status, and notes are saved alongside the planner in `data/state.json`. Back up this folder with the rest of your Unraid appdata.
+
+When adding a personal recipe, each ingredient line can include its total calories and protein. Savorly adds those ingredient totals and divides them by the recipe yield, showing the calculated per-serving nutrition before you save.
