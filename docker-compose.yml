@@ -1,5 +1,6 @@
 services:
   savorly:
+    image: ghcr.io/charliec94/greatgastby-mealplan:latest
     build: .
     container_name: savorly
     ports:

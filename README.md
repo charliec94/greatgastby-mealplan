@@ -36,10 +36,13 @@ A small, polished meal-planning app built for a home server. Plan all seven days
 ## Run with Docker Compose
 
 ```bash
-docker compose up -d --build
+docker compose pull
+docker compose up -d
 ```
 
 Open `http://YOUR-SERVER-IP:3000`. Planner data is stored in the local `./data` folder and survives container upgrades.
+
+For local development from source, use `docker compose up -d --build` instead.
 
 ## Unraid setup
 
@@ -48,6 +51,28 @@ Open `http://YOUR-SERVER-IP:3000`. Planner data is stored in the local `./data` 
 1. Copy this project to `/mnt/user/appdata/savorly/app`.
 2. In the Compose Manager plugin, add a stack using `docker-compose.yml`.
 3. Start the stack and open `http://YOUR-UNRAID-IP:3000`.
+
+### Published container image
+
+The ready-to-run image is:
+
+```text
+ghcr.io/charliec94/greatgastby-mealplan:latest
+```
+
+Every update to `main` is tested and published automatically for both Intel/AMD and ARM64 systems. Version tags such as `v1.1.0` also produce fixed version images.
+
+The first time GitHub publishes the package, its visibility may default to private. In GitHub, open the repository's package, choose **Package settings**, and change its visibility to **Public** so Unraid can pull it without registry credentials.
+
+### Unraid user template
+
+The ready-made template is [`unraid/savorly.xml`](unraid/savorly.xml). Copy it to:
+
+```text
+/boot/config/plugins/dockerMan/templates-user/my-savorly.xml
+```
+
+Then open **Docker → Add Container**, select **Savorly** from **User Templates**, review the appdata path and port, and add your USDA key if desired.
 
 ### Manual container
 
@@ -59,6 +84,12 @@ Build the image from this folder, then create a container with:
 - Restart policy: `unless-stopped`
 
 The app has no login and is intended for a trusted home network. Put it behind your existing authenticated reverse proxy before exposing it to the internet.
+
+## Release pipeline
+
+The workflow in `.github/workflows/container.yml` runs the automated tests, checks application syntax, verifies the Docker build, and then publishes a multi-platform image to GitHub Container Registry. Pull requests are tested but never published. Dependabot checks the Docker base image and workflow actions monthly.
+
+Before relying on a release, confirm **Test and publish container** is green in the repository's **Actions** tab. For a stable release, create a Git tag such as `v1.1.0`; Unraid can stay on `latest` or pin that exact version.
 
 ## Run locally without Docker
 
