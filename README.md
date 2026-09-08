@@ -18,6 +18,11 @@ A small, polished meal-planning app built for a home server. Plan all seven days
 - One-click meal swaps and remaining batch-portion tracking
 - Goal-aware planning with 3–6 eating slots, half portions, and protein-efficient snacks
 - Daily calorie/protein gap indicators and a “Fix this day” action
+- Real calendar weeks with previous/next navigation and copy-last-week
+- Prepared batch inventory and eaten/skipped meal tracking
+- Pantry-aware shopping, manual items, printing, and device sharing
+- Recipe search plus dietary, allergy, dislike, and cooking-time preferences
+- Weekly planning insights and complete JSON backup/restore
 - Serving-aware nutrition and ingredient scaling
 - Automatically consolidated, aisle-grouped shopping list
 - Persistent shopping checks and plan data in `data/state.json`
@@ -79,3 +84,12 @@ A production recipe should record its original source, cooking instructions, dat
 Personal recipes, ratings, verification status, and notes are saved alongside the planner in `data/state.json`. Back up this folder with the rest of your Unraid appdata.
 
 When adding a personal recipe, each ingredient line can include its total calories and protein. Savorly adds those ingredient totals and divides them by the recipe yield, showing the calculated per-serving nutrition before you save.
+
+## Optional APIs
+
+All API calls should go through the Node server so credentials never reach the browser. Copy `.env.example` to `.env` and set keys there; `.env` is ignored by Git. Docker Compose passes these values into the container.
+
+- `USDA_API_KEY`: ingredient nutrition lookup through USDA FoodData Central
+- `RECIPE_API_KEY`: reserved for a future licensed recipe-discovery provider
+
+The `/api/config` endpoint reports only whether an integration is configured, never the credential itself. A production integration should add server-side request validation, rate limiting, short-lived caching, attribution, and provider-specific storage restrictions before recipe search is enabled.

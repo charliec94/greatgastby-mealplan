@@ -6,4 +6,7 @@ services:
       - "3000:3000"
     volumes:
       - ./data:/app/data
+    environment:
+      USDA_API_KEY: ${USDA_API_KEY:-}
+      RECIPE_API_KEY: ${RECIPE_API_KEY:-}
     restart: unless-stopped
