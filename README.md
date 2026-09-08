@@ -15,6 +15,7 @@ A small, polished meal-planning app built for a home server. Plan all seven days
 - Automatic per-serving calorie and protein calculation from personal-recipe ingredient totals
 - Server-side USDA FoodData Central ingredient search with a built-in demo-key fallback
 - TheMealDB recipe discovery with photos, ingredients, methods, and local draft saving
+- Guided USDA nutrition completion for imported recipes, including weight conversion and planner-ready gating
 - Responsive light and dark themes with saved device preference
 - Smart seven-day plan proposals with saved meal, protein, and batch preferences
 - Favorite and “don’t suggest” recipe controls

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateNutrition, consolidate, formatQuantity, generateDay, generateWeek, scaleIngredient } from '../public/core.js';
+import { calculateNutrition, consolidate, formatQuantity, generateDay, generateWeek, scaleIngredient, weightToGrams } from '../public/core.js';
 import { normalizeUsdaFood } from '../usda.js';
 import { normalizeMealDbRecipe, parseMealDbMeasure } from '../mealdb.js';
 test('scales ingredients by planned servings',()=>assert.equal(scaleIngredient({quantity:2},6,2).quantity,6));
@@ -12,3 +12,4 @@ test('goal-aware day uses half portions and stays within slot limit',()=>{const 
 test('normalizes USDA nutrition to its 100 gram search basis',()=>{const food=normalizeUsdaFood({fdcId:123,description:'Chicken breast',servingSize:284,servingSizeUnit:'g',foodNutrients:[{nutrientId:1008,value:165},{nutrientId:1003,value:31.02}]});assert.deepEqual(food,{fdcId:123,name:'Chicken breast',brand:'',dataType:'',amount:100,unit:'g',basis:'100 g',calories:165,protein:31})});
 test('parses common recipe measures',()=>{assert.deepEqual(parseMealDbMeasure('1 1/2 cups'),{quantity:1.5,unit:'cups'});assert.deepEqual(parseMealDbMeasure('½ tsp'),{quantity:.5,unit:'tsp'})});
 test('normalizes a MealDB recipe as a local nutrition draft',()=>{const recipe=normalizeMealDbRecipe({idMeal:'42',strMeal:'Soup',strIngredient1:'Lentils',strMeasure1:'2 cups',strInstructions:'Simmer until tender.',strCategory:'Vegetarian',strArea:'Indian'});assert.equal(recipe.id,'mealdb-42');assert.equal(recipe.calories,0);assert.deepEqual(recipe.ingredients[0],{name:'Lentils',quantity:2,unit:'cups',aisle:'Other',calories:0,protein:0})});
+test('converts supported ingredient weights to grams',()=>{assert.equal(weightToGrams(2,'lb'),907);assert.equal(weightToGrams(8,'oz'),227);assert.equal(weightToGrams(2,'cups'),null)});
