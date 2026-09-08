@@ -13,6 +13,7 @@ A small, polished meal-planning app built for a home server. Plan all seven days
 - Editing and deletion for personal recipes
 - Complete cooking methods and storage guidance for all starter recipes
 - Automatic per-serving calorie and protein calculation from personal-recipe ingredient totals
+- Server-side USDA FoodData Central ingredient search with a built-in demo-key fallback
 - Smart seven-day plan proposals with saved meal, protein, and batch preferences
 - Favorite and “don’t suggest” recipe controls
 - One-click meal swaps and remaining batch-portion tracking
@@ -92,4 +93,4 @@ All API calls should go through the Node server so credentials never reach the b
 - `USDA_API_KEY`: ingredient nutrition lookup through USDA FoodData Central
 - `RECIPE_API_KEY`: reserved for a future licensed recipe-discovery provider
 
-The `/api/config` endpoint reports only whether an integration is configured, never the credential itself. A production integration should add server-side request validation, rate limiting, short-lived caching, attribution, and provider-specific storage restrictions before recipe search is enabled.
+The recipe editor includes USDA FoodData Central ingredient search. Searches stay server-side and use `USDA_API_KEY` when configured, or USDA's rate-limited `DEMO_KEY` for testing. Results are cached for 15 minutes, requests are validated and time out safely, and `/api/config` reports only the integration mode—never the credential itself.
