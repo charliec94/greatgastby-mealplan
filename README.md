@@ -14,6 +14,7 @@ A small, polished meal-planning app built for a home server. Plan all seven days
 - Complete cooking methods and storage guidance for all starter recipes
 - Automatic per-serving calorie and protein calculation from personal-recipe ingredient totals
 - Server-side USDA FoodData Central ingredient search with a built-in demo-key fallback
+- TheMealDB recipe discovery with photos, ingredients, methods, and local draft saving
 - Smart seven-day plan proposals with saved meal, protein, and batch preferences
 - Favorite and “don’t suggest” recipe controls
 - One-click meal swaps and remaining batch-portion tracking
@@ -91,6 +92,9 @@ When adding a personal recipe, each ingredient line can include its total calori
 All API calls should go through the Node server so credentials never reach the browser. Copy `.env.example` to `.env` and set keys there; `.env` is ignored by Git. Docker Compose passes these values into the container.
 
 - `USDA_API_KEY`: ingredient nutrition lookup through USDA FoodData Central
-- `RECIPE_API_KEY`: reserved for a future licensed recipe-discovery provider
+- `MEALDB_API_KEY`: TheMealDB recipe discovery; defaults to the free development key `1`
+- `RECIPE_API_KEY`: reserved for another future licensed recipe-discovery provider
 
 The recipe editor includes USDA FoodData Central ingredient search. Searches stay server-side and use `USDA_API_KEY` when configured, or USDA's rate-limited `DEMO_KEY` for testing. Results are cached for 15 minutes, requests are validated and time out safely, and `/api/config` reports only the integration mode—never the credential itself.
+
+The recipe library's **Find new recipes** button searches TheMealDB. Its free key is intended for development and personal projects. Imported recipes include the source photo, ingredients, method, and attribution, but TheMealDB does not supply nutrition. Savorly therefore saves them as excluded drafts until you edit them and calculate nutrition with USDA.

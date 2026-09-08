@@ -9,4 +9,5 @@ services:
     environment:
       USDA_API_KEY: ${USDA_API_KEY:-}
       RECIPE_API_KEY: ${RECIPE_API_KEY:-}
+      MEALDB_API_KEY: ${MEALDB_API_KEY:-1}
     restart: unless-stopped
