@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateNutrition, consolidate, formatQuantity, generateWeek, scaleIngredient } from '../public/core.js';
+import { calculateNutrition, consolidate, formatQuantity, generateDay, generateWeek, scaleIngredient } from '../public/core.js';
 test('scales ingredients by planned servings',()=>assert.equal(scaleIngredient({quantity:2},6,2).quantity,6));
 test('consolidates the same ingredient across recipes',()=>{const recipes=[{id:'a',title:'A',servings:2,ingredients:[{name:'Lemon',quantity:1,unit:'whole',aisle:'Produce'}]},{id:'b',title:'B',servings:1,ingredients:[{name:'Lemon',quantity:2,unit:'whole',aisle:'Produce'}]}];const result=consolidate([{recipeId:'a',servings:4},{recipeId:'b',servings:1}],recipes);assert.equal(result.length,1);assert.equal(result[0].quantity,4);assert.deepEqual(result[0].recipes,['A','B'])});
 test('formats common shopping fractions',()=>{assert.equal(formatQuantity(.5),'0½');assert.equal(formatQuantity(2),'2')});
 test('calculates per-serving nutrition from ingredient totals',()=>{assert.deepEqual(calculateNutrition([{calories:800,protein:60},{calories:400,protein:20}],4),{calories:300,protein:20})});
-test('generates a full week while excluding blocked recipes',()=>{const recipes=[{id:'a',protein:20},{id:'b',protein:40},{id:'c',protein:30}];const plan=generateWeek(recipes,{a:{excluded:true}},{mealsPerDay:2,highProtein:true});assert.equal(plan.length,14);assert.equal(plan.some(m=>m.recipeId==='a'),false);assert.deepEqual(new Set(plan.map(m=>m.day)).size,7)});
+test('generates a full week while excluding blocked recipes',()=>{const recipes=[{id:'a',protein:20,calories:300},{id:'b',protein:40,calories:400},{id:'c',protein:30,calories:350}];const plan=generateWeek(recipes,{a:{excluded:true}},{maxSlots:5,highProtein:true},{calories:1500,protein:150});assert.ok(plan.length>=21);assert.equal(plan.some(m=>m.recipeId==='a'),false);assert.deepEqual(new Set(plan.map(m=>m.day)).size,7)});
+test('goal-aware day uses half portions and stays within slot limit',()=>{const recipes=[{id:'meal',protein:45,calories:500},{id:'snack',protein:25,calories:200}];const plan=generateDay(recipes,{}, {maxSlots:6,highProtein:true},{calories:1500,protein:150});assert.ok(plan.length>=3&&plan.length<=6);assert.ok(plan.every(m=>[.5,1,1.5].includes(m.servings)))});
