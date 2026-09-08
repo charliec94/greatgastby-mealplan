@@ -13,6 +13,9 @@ A small, polished meal-planning app built for a home server. Plan all seven days
 - Editing and deletion for personal recipes
 - Complete cooking methods and storage guidance for all starter recipes
 - Automatic per-serving calorie and protein calculation from personal-recipe ingredient totals
+- Smart seven-day plan proposals with saved meal, protein, and batch preferences
+- Favorite and “don’t suggest” recipe controls
+- One-click meal swaps and remaining batch-portion tracking
 - Serving-aware nutrition and ingredient scaling
 - Automatically consolidated, aisle-grouped shopping list
 - Persistent shopping checks and plan data in `data/state.json`
