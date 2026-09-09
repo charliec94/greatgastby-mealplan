@@ -24,5 +24,12 @@
   <Config Name="Appdata" Target="/app/data" Default="/mnt/user/appdata/savorly" Mode="rw" Description="Persistent meal plans, recipes, ratings, and settings." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/savorly</Config>
   <Config Name="USDA API Key" Target="USDA_API_KEY" Default="" Mode="" Description="Optional FoodData Central key. Leave blank to use the limited USDA demo key." Type="Variable" Display="always" Required="false" Mask="true"/>
   <Config Name="TheMealDB API Key" Target="MEALDB_API_KEY" Default="1" Mode="" Description="The free personal/development key is 1. Replace it with a supporter key if applicable." Type="Variable" Display="advanced" Required="true" Mask="true">1</Config>
+  <Config Name="SMTP Host" Target="SMTP_HOST" Default="" Mode="" Description="Mail server hostname, for example smtp.example.com." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="SMTP Port" Target="SMTP_PORT" Default="587" Mode="" Description="Use 465 for implicit TLS or commonly 587 for STARTTLS." Type="Variable" Display="always" Required="false" Mask="false">587</Config>
+  <Config Name="SMTP Secure" Target="SMTP_SECURE" Default="false" Mode="" Description="Set true for implicit TLS, normally on port 465. Use false for port 587." Type="Variable" Display="always" Required="false" Mask="false">false</Config>
+  <Config Name="Require STARTTLS" Target="SMTP_REQUIRE_TLS" Default="false" Mode="" Description="Set true to require a STARTTLS upgrade on connections such as port 587." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="SMTP Username" Target="SMTP_USER" Default="" Mode="" Description="SMTP account username, often your email address. Leave both username and password blank for an internal relay." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="SMTP Password" Target="SMTP_PASS" Default="" Mode="" Description="SMTP password or provider-issued app password." Type="Variable" Display="always" Required="false" Mask="true"/>
+  <Config Name="Email From" Target="SMTP_FROM" Default="" Mode="" Description="Sender address accepted by your SMTP provider." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Shopping List Recipient" Target="SMTP_TO" Default="" Mode="" Description="Fixed address that receives shopping lists." Type="Variable" Display="always" Required="false" Mask="false"/>
 </Container>
-

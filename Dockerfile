@@ -4,7 +4,9 @@ ENV NODE_ENV=production PORT=3000 DATA_DIR=/app/data
 LABEL org.opencontainers.image.title="Savorly" \
       org.opencontainers.image.description="A self-hosted weekly meal planner for Unraid" \
       org.opencontainers.image.source="https://github.com/charliec94/greatgastby-mealplan"
-COPY package.json server.js usda.js mealdb.js ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --prod --frozen-lockfile
+COPY server.js usda.js mealdb.js mailer.js ./
 COPY public ./public
 RUN apk add --no-cache su-exec && mkdir -p /app/data && chown node:node /app/data
 # Unraid's per-container Tailscale hook needs root during container startup.

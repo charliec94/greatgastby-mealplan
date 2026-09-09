@@ -25,6 +25,7 @@ A small, polished meal-planning app built for a home server. Plan all seven days
 - Real calendar weeks with previous/next navigation and copy-last-week
 - Prepared batch inventory and eaten/skipped meal tracking
 - Pantry-aware shopping, manual items, printing, and device sharing
+- SMTP delivery of the remaining shopping list to a fixed private recipient
 - Recipe search plus dietary, allergy, dislike, and cooking-time preferences
 - Weekly planning insights and complete JSON backup/restore
 - Serving-aware nutrition and ingredient scaling
@@ -137,6 +138,21 @@ All API calls should go through the Node server so credentials never reach the b
 - `USDA_API_KEY`: ingredient nutrition lookup through USDA FoodData Central
 - `MEALDB_API_KEY`: TheMealDB recipe discovery; defaults to the free development key `1`
 - `RECIPE_API_KEY`: reserved for another future licensed recipe-discovery provider
+
+### Email shopping lists with SMTP
+
+Add these container variables in Unraid:
+
+- `SMTP_HOST`: your mail provider's SMTP hostname
+- `SMTP_PORT`: normally `465` for implicit TLS or `587` for STARTTLS
+- `SMTP_SECURE`: `true` with port 465; normally `false` with port 587
+- `SMTP_REQUIRE_TLS`: optionally set `true` to require STARTTLS
+- `SMTP_USER`: your SMTP username; leave blank only for a trusted internal relay
+- `SMTP_PASS`: your SMTP password or app password
+- `SMTP_FROM`: the sender address accepted by the provider
+- `SMTP_TO`: the fixed address that receives your lists
+
+After applying the container changes, open **Shopping list → Email list**. Savorly emails unchecked items that are not marked as already in the pantry, grouped by aisle. The password and recipient remain server-side. Sending is limited to once every 30 seconds, remote attachments are disabled, and the browser cannot select an arbitrary recipient.
 
 The recipe editor includes USDA FoodData Central ingredient search. Searches stay server-side and use `USDA_API_KEY` when configured, or USDA's rate-limited `DEMO_KEY` for testing. Results are cached for 15 minutes, requests are validated and time out safely, and `/api/config` reports only the integration mode—never the credential itself.
 

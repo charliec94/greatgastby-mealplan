@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { calculateNutrition, consolidate, formatQuantity, generateDay, generateWeek, scaleIngredient, weightToGrams } from '../public/core.js';
 import { normalizeUsdaFood } from '../usda.js';
 import { normalizeMealDbRecipe, parseMealDbMeasure } from '../mealdb.js';
+import { shoppingEmail, smtpConfigured } from '../mailer.js';
 test('scales ingredients by planned servings',()=>assert.equal(scaleIngredient({quantity:2},6,2).quantity,6));
 test('consolidates the same ingredient across recipes',()=>{const recipes=[{id:'a',title:'A',servings:2,ingredients:[{name:'Lemon',quantity:1,unit:'whole',aisle:'Produce'}]},{id:'b',title:'B',servings:1,ingredients:[{name:'Lemon',quantity:2,unit:'whole',aisle:'Produce'}]}];const result=consolidate([{recipeId:'a',servings:4},{recipeId:'b',servings:1}],recipes);assert.equal(result.length,1);assert.equal(result[0].quantity,4);assert.deepEqual(result[0].recipes,['A','B'])});
 test('formats common shopping fractions',()=>{assert.equal(formatQuantity(.5),'0½');assert.equal(formatQuantity(2),'2')});
@@ -13,3 +14,5 @@ test('normalizes USDA nutrition to its 100 gram search basis',()=>{const food=no
 test('parses common recipe measures',()=>{assert.deepEqual(parseMealDbMeasure('1 1/2 cups'),{quantity:1.5,unit:'cups'});assert.deepEqual(parseMealDbMeasure('½ tsp'),{quantity:.5,unit:'tsp'})});
 test('normalizes a MealDB recipe as a local nutrition draft',()=>{const recipe=normalizeMealDbRecipe({idMeal:'42',strMeal:'Soup',strIngredient1:'Lentils',strMeasure1:'2 cups',strInstructions:'Simmer until tender.',strCategory:'Vegetarian',strArea:'Indian'});assert.equal(recipe.id,'mealdb-42');assert.equal(recipe.calories,0);assert.deepEqual(recipe.ingredients[0],{name:'Lentils',quantity:2,unit:'cups',aisle:'Other',calories:0,protein:0})});
 test('converts supported ingredient weights to grams',()=>{assert.equal(weightToGrams(2,'lb'),907);assert.equal(weightToGrams(8,'oz'),227);assert.equal(weightToGrams(2,'cups'),null)});
+test('checks authenticated and relay SMTP configuration',()=>{assert.equal(smtpConfigured({SMTP_HOST:'mail.local',SMTP_FROM:'me@example.com',SMTP_TO:'me@example.com'}),true);assert.equal(smtpConfigured({SMTP_HOST:'mail.local',SMTP_FROM:'me@example.com',SMTP_TO:'me@example.com',SMTP_USER:'me'}),false)});
+test('builds safe grouped shopping-list email content',()=>{const email=shoppingEmail([{aisle:'Produce',name:'Lemon <fresh>',quantity:'2 whole',recipes:['Salmon']}],'Sep 7–13');assert.match(email.text,/Produce\n- 2 whole Lemon <fresh>/);assert.match(email.html,/Lemon &lt;fresh&gt;/);assert.equal(email.itemCount,1)});
