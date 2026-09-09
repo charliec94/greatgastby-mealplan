@@ -12,7 +12,7 @@
   <Category>Productivity: Tools:</Category>
   <WebUI>http://[IP]:[PORT:3000]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/charliec94/greatgastby-mealplan/main/unraid/savorly.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/charliec94/greatgastby-mealplan/main/public/icon.svg</Icon>
+  <Icon>https://raw.githubusercontent.com/charliec94/greatgastby-mealplan/main/public/icon.png</Icon>
   <ExtraParams/>
   <PostArgs/>
   <CPUset/>
