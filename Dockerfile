@@ -6,9 +6,13 @@ LABEL org.opencontainers.image.title="Savorly" \
       org.opencontainers.image.source="https://github.com/charliec94/greatgastby-mealplan"
 COPY package.json server.js usda.js mealdb.js ./
 COPY public ./public
-RUN mkdir -p /app/data && chown -R node:node /app
-USER node
+RUN apk add --no-cache su-exec && mkdir -p /app/data && chown node:node /app/data
+# Unraid's per-container Tailscale hook needs root during container startup.
+# The final command drops the Savorly app back to the unprivileged node user.
+USER root
 EXPOSE 3000
 VOLUME ["/app/data"]
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD ["node", "-e", "fetch('http://127.0.0.1:3000/api/config').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
-CMD ["node", "server.js"]
+# Keep both the health check and startup command free of shell metacharacters;
+# some Unraid hooks reconstruct container commands through eval.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD ["wget", "-q", "--spider", "http://127.0.0.1:3000/api/config"]
+CMD ["su-exec", "node:node", "node", "server.js"]

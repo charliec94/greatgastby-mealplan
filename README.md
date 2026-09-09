@@ -85,6 +85,16 @@ Build the image from this folder, then create a container with:
 
 The app has no login and is intended for a trusted home network. Put it behind your existing authenticated reverse proxy before exposing it to the internet.
 
+### Unraid per-container Tailscale
+
+The published image is compatible with Unraid's per-container Tailscale hook. It starts as root because the hook needs startup privileges, then `su-exec` drops the Savorly server to the unprivileged `node` user. Both the container command and health check avoid shell-sensitive formatting that can break wrappers which reconstruct commands through `eval`.
+
+The final image command is simply:
+
+```text
+["su-exec", "node:node", "node", "server.js"]
+```
+
 ## Release pipeline
 
 The workflow in `.github/workflows/container.yml` runs the automated tests, checks application syntax, verifies the Docker build, and then publishes a multi-platform image to GitHub Container Registry. Pull requests are tested but never published. Dependabot checks the Docker base image and workflow actions monthly.
