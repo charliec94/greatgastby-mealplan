@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:26-alpine
 WORKDIR /app
 ENV NODE_ENV=production PORT=3000 DATA_DIR=/app/data
 LABEL org.opencontainers.image.title="Savorly" \
