@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateNutrition, consolidate, formatQuantity, generateDay, generateWeek, scaleIngredient, weightToGrams } from '../public/core.js';
+import { calculateNutrition, consolidate, formatQuantity, generateDay, generateWeek, scaleIngredient, suggestGoalMeals, weightToGrams } from '../public/core.js';
 import { normalizeUsdaFood } from '../usda.js';
 import { normalizeMealDbRecipe, parseMealDbMeasure } from '../mealdb.js';
 import { shoppingEmail, smtpConfigured } from '../mailer.js';
@@ -10,6 +10,8 @@ test('formats common shopping fractions',()=>{assert.equal(formatQuantity(.5),'0
 test('calculates per-serving nutrition from ingredient totals',()=>{assert.deepEqual(calculateNutrition([{calories:800,protein:60},{calories:400,protein:20}],4),{calories:300,protein:20})});
 test('generates a full week while excluding blocked recipes',()=>{const recipes=[{id:'a',protein:20,calories:300},{id:'b',protein:40,calories:400},{id:'c',protein:30,calories:350}];const plan=generateWeek(recipes,{a:{excluded:true}},{maxSlots:5,highProtein:true},{calories:1500,protein:150});assert.ok(plan.length>=21);assert.equal(plan.some(m=>m.recipeId==='a'),false);assert.deepEqual(new Set(plan.map(m=>m.day)).size,7)});
 test('goal-aware day uses half portions and stays within slot limit',()=>{const recipes=[{id:'meal',protein:45,calories:500},{id:'snack',protein:25,calories:200}];const plan=generateDay(recipes,{}, {maxSlots:6,highProtein:true},{calories:1500,protein:150});assert.ok(plan.length>=3&&plan.length<=6);assert.ok(plan.every(m=>[.5,1,1.5].includes(m.servings)))});
+test('goal suggestions favor protein-efficient choices that fit the remaining calories',()=>{const recipes=[{id:'lean',protein:30,calories:180},{id:'heavy',protein:32,calories:600},{id:'blocked',protein:40,calories:200}];const suggestions=suggestGoalMeals(recipes,{blocked:{excluded:true}},{cal:1250,protein:110},{calories:1500,protein:150});assert.equal(suggestions[0].recipeId,'lean');assert.equal(suggestions.some(item=>item.recipeId==='blocked'),false);assert.ok(suggestions[0].servings>0)});
+test('goal suggestions stop once the protein target is met',()=>assert.deepEqual(suggestGoalMeals([{id:'a',protein:20,calories:200}],{}, {cal:1200,protein:150},{calories:1500,protein:150}),[]));
 test('normalizes USDA nutrition to its 100 gram search basis',()=>{const food=normalizeUsdaFood({fdcId:123,description:'Chicken breast',servingSize:284,servingSizeUnit:'g',foodNutrients:[{nutrientId:1008,value:165},{nutrientId:1003,value:31.02}]});assert.deepEqual(food,{fdcId:123,name:'Chicken breast',brand:'',dataType:'',amount:100,unit:'g',basis:'100 g',calories:165,protein:31})});
 test('parses common recipe measures',()=>{assert.deepEqual(parseMealDbMeasure('1 1/2 cups'),{quantity:1.5,unit:'cups'});assert.deepEqual(parseMealDbMeasure('½ tsp'),{quantity:.5,unit:'tsp'})});
 test('normalizes a MealDB recipe as a local nutrition draft',()=>{const recipe=normalizeMealDbRecipe({idMeal:'42',strMeal:'Soup',strIngredient1:'Lentils',strMeasure1:'2 cups',strInstructions:'Simmer until tender.',strCategory:'Vegetarian',strArea:'Indian'});assert.equal(recipe.id,'mealdb-42');assert.equal(recipe.calories,0);assert.deepEqual(recipe.ingredients[0],{name:'Lentils',quantity:2,unit:'cups',aisle:'Other',calories:0,protein:0})});

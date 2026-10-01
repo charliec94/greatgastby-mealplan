@@ -21,10 +21,11 @@ A small, polished meal-planning app built for a home server. Plan all seven days
 - Favorite and “don’t suggest” recipe controls
 - One-click meal swaps and remaining batch-portion tracking
 - Goal-aware planning with 3–6 eating slots, half portions, and protein-efficient snacks
-- Daily calorie/protein gap indicators and a “Fix this day” action
+- Daily calorie/protein gap indicators with ranked add-one-meal suggestions
 - Real calendar weeks with previous/next navigation and copy-last-week
 - Prepared batch inventory and eaten/skipped meal tracking
 - Pantry-aware shopping, manual items, printing, and device sharing
+- Mobile shopping mode with large controls, live trip progress, screen wake lock, and undo
 - SMTP delivery of the remaining shopping list to a fixed private recipient
 - Recipe search plus dietary, allergy, dislike, and cooking-time preferences
 - Weekly planning insights and complete JSON backup/restore
