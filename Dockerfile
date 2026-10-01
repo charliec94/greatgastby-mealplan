@@ -12,9 +12,11 @@ RUN apk add --no-cache su-exec && mkdir -p /app/data && chown node:node /app/dat
 # Unraid's per-container Tailscale hook needs root during container startup.
 # The final command drops the Savorly app back to the unprivileged node user.
 USER root
+COPY scripts/start-savorly.sh /usr/local/bin/start-savorly
+RUN chmod 755 /usr/local/bin/start-savorly
 EXPOSE 3000
 VOLUME ["/app/data"]
 # Keep both the health check and startup command free of shell metacharacters;
 # some Unraid hooks reconstruct container commands through eval.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD ["wget", "-q", "--spider", "http://127.0.0.1:3000/api/config"]
-CMD ["su-exec", "node:node", "node", "server.js"]
+CMD ["/usr/local/bin/start-savorly"]

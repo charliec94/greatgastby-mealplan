@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./data:/app/data
+      - "${SAVORLY_DATA_PATH:-./data}:/app/data"
     environment:
       USDA_API_KEY: ${USDA_API_KEY:-}
       RECIPE_API_KEY: ${RECIPE_API_KEY:-}

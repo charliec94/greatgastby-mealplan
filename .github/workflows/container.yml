@@ -33,6 +33,8 @@ jobs:
         run: pnpm run build
       - name: Verify container builds
         run: docker build --tag savorly:test .
+      - name: Verify persistent appdata and startup permissions
+        run: docker compose config --quiet && sh scripts/test-container.sh
 
   publish:
     if: github.event_name != 'pull_request'

@@ -13,7 +13,16 @@
   <WebUI>http://[IP]:[PORT:3000]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/charliec94/greatgastby-mealplan/main/unraid/savorly.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/charliec94/greatgastby-mealplan/main/public/icon.png</Icon>
-  <ExtraParams/>
+  <TailscaleEnabled>true</TailscaleEnabled>
+  <TailscaleHostname>savorly</TailscaleHostname>
+  <TailscaleIsExitNode>false</TailscaleIsExitNode>
+  <TailscaleSSH>false</TailscaleSSH>
+  <TailscaleUserspaceNetworking>true</TailscaleUserspaceNetworking>
+  <TailscaleServe>serve</TailscaleServe>
+  <TailscaleServePort>3000</TailscaleServePort>
+  <TailscaleWebUI>https://[hostname][magicdns]/</TailscaleWebUI>
+  <TailscaleStateDir>/app/data/.tailscale_state</TailscaleStateDir>
+  <ExtraParams>--restart=unless-stopped</ExtraParams>
   <PostArgs/>
   <CPUset/>
   <DateInstalled>0</DateInstalled>

@@ -52,7 +52,8 @@ For local development from source, use `docker compose up -d --build` instead.
 
 1. Copy this project to `/mnt/user/appdata/savorly/app`.
 2. In the Compose Manager plugin, add a stack using `docker-compose.yml`.
-3. Start the stack and open `http://YOUR-UNRAID-IP:3000`.
+3. Set `SAVORLY_DATA_PATH` to the absolute path of your existing data folder, or `/mnt/user/appdata/savorly` for a new installation.
+4. Start the stack and open `http://YOUR-UNRAID-IP:3000`.
 
 ### Published container image
 
@@ -82,7 +83,7 @@ Build the image from this folder, then create a container with:
 
 - Container port: `3000`
 - Host port: `3000` (or any free port)
-- Persistent path: `/mnt/user/appdata/savorly/data` → `/app/data`
+- Persistent path: `/mnt/user/appdata/savorly` → `/app/data` (new installations; keep the current host folder on upgrades)
 - Restart policy: `unless-stopped`
 
 The app has no login and is intended for a trusted home network. Put it behind your existing authenticated reverse proxy before exposing it to the internet.
@@ -94,7 +95,7 @@ The published image is compatible with Unraid's per-container Tailscale hook. It
 The final image command is simply:
 
 ```text
-["su-exec", "node:node", "node", "server.js"]
+["/usr/local/bin/start-savorly"]
 ```
 
 ## Release pipeline
@@ -158,3 +159,26 @@ After applying the container changes, open **Shopping list → Email list**. Sav
 The recipe editor includes USDA FoodData Central ingredient search. Searches stay server-side and use `USDA_API_KEY` when configured, or USDA's rate-limited `DEMO_KEY` for testing. Results are cached for 15 minutes, requests are validated and time out safely, and `/api/config` reports only the integration mode—never the credential itself.
 
 The recipe library's **Find new recipes** button searches TheMealDB. Its free key is intended for development and personal projects. Imported recipes include the source photo, ingredients, method, and attribution, but TheMealDB does not supply nutrition. Savorly therefore saves them as excluded drafts until you edit them and calculate nutrition with USDA.
+
+## Persistent appdata and Tailscale
+
+The Unraid XML includes a required **Path** mapping, not a Variable: `/mnt/user/appdata/savorly` on the host to `/app/data` in the container, Read/Write. A Dockerfile VOLUME does not create this host mapping. When installing the image manually, use **Add another Path, Port, Variable, Label or Device → Path**.
+
+Existing installations must retain their current host directory, including installations using `/mnt/user/appdata/savorly/data`. Before changing a mapping, stop the container and copy its existing data into a verified empty destination. Never overwrite an existing destination blindly. Meal Plan retains `/app/data` for compatibility; do not change it to Diary's `/data`.
+
+The template enables Tailscale Serve on internal port `3000`, hostname `savorly`, userspace networking, and persistent state at `/app/data/.tailscale_state`. Funnel, SSH, and exit-node mode remain disabled. Preserve an existing working hostname. Compose alone does not install Unraid's Tailscale hook.
+
+The startup script repairs ownership of the appdata folder and `state.json` for the non-root node user. It never recursively changes Tailscale state. Updating an image does not update the installed Unraid template: apply Path and Tailscale settings through the container's Edit screen too.
+
+Use the actual case-sensitive container name from `docker ps -a`. With the default template name:
+
+```sh
+docker inspect Savorly --format '{{range .Mounts}}{{println .Source "->" .Destination}}{{end}}'
+docker exec Savorly wget -S -O - http://127.0.0.1:3000/api/config
+docker exec Savorly tailscale status
+docker exec Savorly tailscale serve status
+```
+
+The mount source must be your appdata folder, not `/var/lib/docker/volumes/...`. Complete initial sign-in using the latest container-log link; the hook can wait for authentication before starting the app. If Serve is missing, run `docker exec -u 0 Savorly tailscale serve --bg http://127.0.0.1:3000`. Open the printed HTTPS URL without a LAN port.
+
+After restart and recreation, check saved meal plans, Tailscale sign-in, and HTTPS access. CI tests a root-owned bind mount, writing via the API, persistence across recreation, non-root execution, and preservation of Tailscale-directory permissions. Live Tailscale authentication and reachability still require checks on the NAS. Existing Unraid appdata backups cover this folder; no backup scheduler is added.
